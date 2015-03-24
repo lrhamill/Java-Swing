@@ -3,8 +3,6 @@
  * and open the template in the editor.
  */
 package swing.book;
-import java.awt.Component;
-import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import javax.swing.*;
 
@@ -14,33 +12,27 @@ import javax.swing.*;
  */
 public class ImageViewer extends JFrame {
     
+    int width;
+    int height;
+    
     public ImageViewer(BufferedImage input) {
         
         setTitle("Image");
-        setSize(300, 200);
         
-        
-        
+        ImagePanel imgToDisplay = new ImagePanel(input);
+        add(imgToDisplay);
+        pack();        
+
         setVisible( true );
-        
-        
+                
     }
     
 }
 
-class ImageComponent extends Component {
+class ImagePanel extends JPanel {
     
-    private BufferedImage image;
-    
-    public ImageComponent (BufferedImage input) {
-        
-        image = input;
-        
+    public ImagePanel(BufferedImage input) {
+        JLabel picLabel = new JLabel(new ImageIcon(input));
+        add(picLabel);
     }
-    
-    public void PaintComponent () {
-        Graphics2D g = image.createGraphics();
-        
-    }
-    
 }

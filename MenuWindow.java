@@ -20,7 +20,7 @@ import javax.swing.*;
  *
  * @author c1031996
  */
-public class MenuWindow extends JFrame {
+public class MenuWindow extends JFrame implements ActionListener {
     
     JPanel pnl = new JPanel();
     JMenuBar menuBar;
@@ -47,7 +47,7 @@ public class MenuWindow extends JFrame {
 
     }
     
-    public void openImage ( ActionEvent e ) {
+    public void actionPerformed(ActionEvent e) {
         if ("openImage".equals(e.getActionCommand())) {
             JFileChooser imageFC = new JFileChooser();
             int returnVal = imageFC.showOpenDialog(this);
@@ -62,16 +62,17 @@ public class MenuWindow extends JFrame {
                     System.exit(1);
                 }
                 ImageViewer displayImg = new ImageViewer(img);
-}
+            }
         }
-        
     }
+    
+        
     
     public MenuWindow() {
         super( "Window w/ a menu" );
         setSize( 500, 200 );
         setDefaultCloseOperation( EXIT_ON_CLOSE );
-        setLayout(new FlowLayout(FlowLayout.LEFT));
+        setLayout( new FlowLayout( FlowLayout.LEFT ) );
         
         createMenu();
 
@@ -80,16 +81,5 @@ public class MenuWindow extends JFrame {
     }
     
 }
-
-class MenuActionListener implements ActionListener {
-  
-    public void actionPerformed(ActionEvent e) {
-        if ("openImage".equals(e.getActionCommand())) {
-            openImage();
-        }
-    }
-    
-}
-    
 
   
