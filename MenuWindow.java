@@ -49,10 +49,11 @@ public class MenuWindow extends JFrame implements ActionListener {
     
     public void actionPerformed(ActionEvent e) {
         if ("openImage".equals(e.getActionCommand())) {
+            
             JFileChooser imageFC = new JFileChooser();
             int returnVal = imageFC.showOpenDialog(this);
             
-            if (returnVal == javax.swing.JFileChooser.APPROVE_OPTION) {
+            if ( returnVal == javax.swing.JFileChooser.APPROVE_OPTION ) {
                 BufferedImage img =  null;
                 File selFile = imageFC.getSelectedFile();
                 try {
@@ -69,7 +70,7 @@ public class MenuWindow extends JFrame implements ActionListener {
         
     
     public MenuWindow() {
-        super( "Window w/ a menu" );
+        super( "Image Viewer" );
         setSize( 500, 200 );
         setDefaultCloseOperation( EXIT_ON_CLOSE );
         setLayout( new FlowLayout( FlowLayout.LEFT ) );

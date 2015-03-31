@@ -12,17 +12,13 @@ import javax.swing.*;
  */
 public class ImageViewer extends JFrame {
     
-    int width;
-    int height;
-    
-    public ImageViewer(BufferedImage input) {
+    public ImageViewer( BufferedImage input ) {
         
         setTitle("Image");
-        
         ImagePanel imgToDisplay = new ImagePanel(input);
+        
         add(imgToDisplay);
         pack();        
-
         setVisible( true );
                 
     }
@@ -31,8 +27,8 @@ public class ImageViewer extends JFrame {
 
 class ImagePanel extends JPanel {
     
-    public ImagePanel(BufferedImage input) {
-        JLabel picLabel = new JLabel(new ImageIcon(input));
+    public ImagePanel( BufferedImage input ) {
+        JLabel picLabel = new JLabel( new ImageIcon(input) );
         add(picLabel);
     }
 }
