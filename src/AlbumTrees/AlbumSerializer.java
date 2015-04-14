@@ -46,7 +46,10 @@ public class AlbumSerializer {
             if (loadedAlbums instanceof AlbumContainer) {
                 returnAC = (AlbumContainer) loadedAlbums;
             }
-        } catch (Exception ex) { }
+        } catch (Exception ex) {
+            returnAC = new AlbumContainer();
+            serializeAlbums(returnAC);
+        }
         return returnAC;
     }
 }

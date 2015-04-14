@@ -49,6 +49,10 @@ public class TreeViewer extends JPanel implements TreeSelectionListener {
        
     }
     
+    public void updateNodes() {
+        insertNodeInto
+    }
+    
     public void valueChanged(TreeSelectionEvent e) {
         
         DefaultMutableTreeNode node = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();

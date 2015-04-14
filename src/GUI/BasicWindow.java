@@ -13,6 +13,7 @@ package GUI;
 
 import AlbumTrees.AlbumContainer;
 import AlbumTrees.AlbumSerializer;
+import AlbumTrees.PhotoAlbum;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
@@ -27,78 +28,133 @@ import javax.swing.*;
 
 public class BasicWindow extends JFrame implements ActionListener {
     
-    JPanel pnl = new JPanel();
-    TreeViewer tree = new TreeViewer();
-    JMenuBar menuBar;
-    JMenu filemenu;
-    JMenuItem openFile;
-    ImageIcon open = new ImageIcon("open.png");
+    // Used to save/load albums
+    AlbumSerializer Serializer = new AlbumSerializer(); 
     AlbumContainer albumsToDisplay;
     
+    // UI components
+    JPanel pnl = new JPanel();
+    JPanel menuPanel = new JPanel();
+    ImagePanel iPnl = new ImagePanel();
+    TreeViewer tree = new TreeViewer();
+    JMenuBar menuBar;
+    
+    // Menu icons
+    ImageIcon open = new ImageIcon("open.png");
+    ImageIcon tag = new ImageIcon("tag.png"); 
+    ImageIcon albumIcon = new ImageIcon("album.png");
+    
     private void createTree() {
-        AlbumSerializer Serializer = new AlbumSerializer();
+        
+        if ( albumsToDisplay == null ) {
         albumsToDisplay = Serializer.deserializeAlbums();
+        }
         
-        tree.createNodes(albumsToDisplay);
-        
+        tree.createNodes(albumsToDisplay);        
     }
     
     private void createMenu() {
 
         menuBar = new JMenuBar();
         
-        filemenu = new JMenu("File");
+        JMenu filemenu = new JMenu("File");
         filemenu.getAccessibleContext().setAccessibleDescription(
             "Open files & exit");
         
-        openFile = new JMenuItem( "Open file", open );
+        JMenuItem openFile = new JMenuItem( "Open file", open );
         openFile.setActionCommand("openImage");
         openFile.addActionListener(this);
         filemenu.add( openFile );
         
-        menuBar.add(filemenu);
+        JMenu tagMenu = new JMenu("Tag");
+        filemenu.getAccessibleContext().setAccessibleDescription(
+            "Tag an image");
         
-        pnl.add(menuBar);
+        JMenuItem tagImage = new JMenuItem( "Tag the current image", tag );
+        tagImage.setActionCommand( "tagImage" );
+        tagImage.addActionListener( this );
+        tagMenu.add( tagImage );
+        
+        JMenu albumMenu = new JMenu("Album");
+        filemenu.getAccessibleContext().setAccessibleDescription(
+            "Create and manage albums");
+        
+        JMenuItem newAlbum = new JMenuItem( "New Album", albumIcon );
+        newAlbum.setActionCommand( "newAlbum" );
+        newAlbum.addActionListener( this );
+        albumMenu.add( newAlbum );
+        
+        
+        menuBar.add( filemenu );
+        menuBar.add( tagMenu );
+        menuBar.add( albumMenu );
+        menuPanel.add( menuBar );
+        menuPanel.setLayout( new FlowLayout( FlowLayout.LEFT ) );
+        
+        pnl.add(menuPanel, BorderLayout.NORTH);
 
     }
     
     public void actionPerformed(ActionEvent e) {
         if ("openImage".equals(e.getActionCommand())) {
-            
-            JFileChooser imageFC = new JFileChooser();
-            int returnVal = imageFC.showOpenDialog(this);
-            
-            if ( returnVal == javax.swing.JFileChooser.APPROVE_OPTION ) {
-                BufferedImage img =  null;
-                File selFile = imageFC.getSelectedFile();
-                try {
-                    img = ImageIO.read(selFile);
-                } catch (IOException ex) {
-                    Logger.getLogger(BasicWindow.class.getName()).log(Level.SEVERE, null, ex);
-                    System.exit(1);
-                }
-                ImageWindow displayImg = new ImageWindow(img, selFile);
-            }
+            openImage();
+        }
+        
+        else if ("newAlbum".equals(e.getActionCommand())) {
+            JFrame container = new JFrame();
+            String prompt = "What would you like to call your new Album?";
+            String input = JOptionPane.showInputDialog(container, prompt);
+            addNewAlbum(input);
         }
     }
     
+    public void openImage () {
+        JFileChooser imageFC = new JFileChooser();
+        int returnVal = imageFC.showOpenDialog(this);
+            
+        if ( returnVal == javax.swing.JFileChooser.APPROVE_OPTION ) {
+            BufferedImage img =  null;
+            File selFile = imageFC.getSelectedFile();
+            try {
+                img = ImageIO.read(selFile);
+            } catch (IOException ex) {
+                Logger.getLogger(BasicWindow.class.getName()).log(Level.SEVERE, null, ex);
+                System.exit(1);
+            }
+            iPnl.newImage(img);
+            iPnl.validate();
+            iPnl.repaint();
+        }            
+    }
+    
+    public void addNewAlbum( String input ) {
         
+        PhotoAlbum newAlbum = new PhotoAlbum(input);
+        albumsToDisplay.addNewAlbum( newAlbum );
+        
+        Serializer.serializeAlbums(albumsToDisplay);
+        tree.deleteAllNodes();
+        
+        
+        
+    }
     
     public BasicWindow() {
         super( "Image Viewer" );
-        //setSize( 500, 200 );
+        //setSize( 500, 200 );System.out.println(input);
         setDefaultCloseOperation( EXIT_ON_CLOSE );
         setLayout( new BorderLayout() );
+        pnl.setLayout( new BorderLayout() );
         
         createMenu();
         createTree();
-        
-        add( pnl, BorderLayout.PAGE_START );
-        add( tree, BorderLayout.CENTER );
+        pnl.add(tree, BorderLayout.WEST);
+        pnl.add( iPnl, BorderLayout.CENTER);
+        add( pnl );
         pack();
         setVisible( true );
     }
-    
+
 }
 
   
