@@ -33,4 +33,12 @@ public class ImageTag implements Serializable {
     public String getName() {
         return fileName;
     }
+    
+    public String getAlbum() {
+        return albumTag;
+    }
+    
+    public String toString() {
+        return fileName + ":" + filePath;
+    }
 }

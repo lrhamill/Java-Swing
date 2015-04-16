@@ -13,20 +13,23 @@ import javax.swing.*;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
 /**
  *
- * @author liamhamill
+ * @author c1031996
  */
 public class TreeViewer extends JPanel implements TreeSelectionListener {
     
     private JTree tree;
     private JScrollPane scrollPane;
     private DefaultMutableTreeNode top = new DefaultMutableTreeNode("Albums");
+    private DefaultTreeModel model;
     
     public TreeViewer() {
         
         setLayout( new BorderLayout() );
         tree = new JTree(top);
+        model = (DefaultTreeModel) tree.getModel();
         tree.addTreeSelectionListener(this);
         scrollPane = new JScrollPane(tree);
                
@@ -49,10 +52,60 @@ public class TreeViewer extends JPanel implements TreeSelectionListener {
        
     }
     
-    public void updateNodes() {
-        insertNodeInto
+    public void addAlbum( PhotoAlbum album ) {
+        
+        DefaultMutableTreeNode thisAlbum = new DefaultMutableTreeNode(album.getName());
+        model.insertNodeInto(thisAlbum, top, top.getChildCount());
     }
     
+    public void addTag( ImageTag tag ) {
+        for ( int i = 0; i < top.getChildCount(); i++ ) {
+            DefaultMutableTreeNode album = (DefaultMutableTreeNode) top.getChildAt(i);
+            if ( tag.getAlbum() == (String) album.getUserObject() ) {
+                DefaultMutableTreeNode thisTag = new DefaultMutableTreeNode(tag.getName());
+                model.insertNodeInto(thisTag, album, album.getChildCount());
+            }
+            
+        }
+    }
+    
+    public boolean isNodeAlbum() {
+    
+        DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
+        if ( selectedNode.getParent() == top ) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
+    public String getNodeAlbumName() {
+        
+        DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
+        DefaultMutableTreeNode targetAlbum = (DefaultMutableTreeNode) selectedNode.getParent();
+        
+        return (String) targetAlbum.getUserObject();
+        
+    }
+    
+    public String deleteNode() {
+        DefaultMutableTreeNode selectedNode = getSelectedNode();
+        if (selectedNode != null) {
+            try {
+                model.removeNodeFromParent(selectedNode);
+                return selectedNode.toString();
+            } catch (IllegalArgumentException e) {
+                JOptionPane.showMessageDialog(null, "You cannot delete the album container.");
+                return null;
+            }
+        } else {
+            return null;
+        }
+    }
+    
+    public DefaultMutableTreeNode getSelectedNode() {
+        return (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
+    }
     public void valueChanged(TreeSelectionEvent e) {
         
         DefaultMutableTreeNode node = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
