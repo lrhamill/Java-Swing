@@ -55,6 +55,7 @@ public class BasicWindow extends JFrame implements ActionListener {
     
     private void createTree() {
         
+        // Load albums if there are none already
         if ( albumsToDisplay == null ) {
             albumsToDisplay = Serializer.deserializeAlbums();
         }
@@ -64,9 +65,17 @@ public class BasicWindow extends JFrame implements ActionListener {
         delBtn.setActionCommand("delNode");
         delBtn.addActionListener(this);
         
+        JButton openBtn = new JButton("Open Selected Image");
+        openBtn.setActionCommand("openTag");
+        openBtn.addActionListener(this);
+        
+        JPanel btnPnl = new JPanel();
+        btnPnl.add( openBtn, BorderLayout.CENTER );
+        btnPnl.add( delBtn, BorderLayout.SOUTH );
+        
         tPnl.setLayout( new BorderLayout() );
         tPnl.add( tree, BorderLayout.CENTER );
-        tPnl.add(delBtn, BorderLayout.SOUTH);
+        tPnl.add( btnPnl, BorderLayout.SOUTH );
         
     }
     
@@ -83,15 +92,6 @@ public class BasicWindow extends JFrame implements ActionListener {
         openFile.addActionListener(this);
         filemenu.add( openFile );
         
-        JMenu tagMenu = new JMenu("Tag");
-        filemenu.getAccessibleContext().setAccessibleDescription(
-            "Tag an image");
-        
-        JMenuItem tagImage = new JMenuItem( "Tag the current image", tag );
-        tagImage.setActionCommand( "tagImage" );
-        tagImage.addActionListener( this );
-        tagMenu.add( tagImage );
-        
         JMenu albumMenu = new JMenu("Album");
         filemenu.getAccessibleContext().setAccessibleDescription(
             "Create and manage albums");
@@ -101,10 +101,19 @@ public class BasicWindow extends JFrame implements ActionListener {
         newAlbum.addActionListener( this );
         albumMenu.add( newAlbum );
         
+        JMenu tagMenu = new JMenu("Tag");
+        filemenu.getAccessibleContext().setAccessibleDescription(
+            "Tag an image");
+        
+        JMenuItem tagImage = new JMenuItem( "Tag the current image", tag );
+        tagImage.setActionCommand( "tagImage" );
+        tagImage.addActionListener( this );
+        tagMenu.add( tagImage );
+        
         
         menuBar.add( filemenu );
-        menuBar.add( tagMenu );
         menuBar.add( albumMenu );
+        menuBar.add( tagMenu );
         menuPanel.add( menuBar );
         menuPanel.setLayout( new FlowLayout( FlowLayout.LEFT ) );
         
@@ -114,7 +123,14 @@ public class BasicWindow extends JFrame implements ActionListener {
     
     public void actionPerformed(ActionEvent e) {
         if ("openImage".equals(e.getActionCommand())) {
-            openImage();
+            JFileChooser imageFC = new JFileChooser();
+            int returnVal = imageFC.showOpenDialog(this);
+            
+            if ( returnVal == javax.swing.JFileChooser.APPROVE_OPTION ) {
+            
+                selFile = imageFC.getSelectedFile();
+                openImage(selFile);
+            }
         }
         
         else if ("newAlbum".equals(e.getActionCommand())) {
@@ -142,6 +158,25 @@ public class BasicWindow extends JFrame implements ActionListener {
             Serializer.serializeAlbums(albumsToDisplay);
         
           }
+            
+        } else if ("openTag".equals(e.getActionCommand())) {
+            if ( tree.isNodeAlbum() ) {
+                JOptionPane.showMessageDialog(null, "You can only open an "
+                                          + "image tag, not an album.");
+                return;
+            } else {
+                String[] tagInfo = tree.getNodeTagInfo();
+                for ( PhotoAlbum item : albumsToDisplay.getContents() ) {
+                    if ( item.getName() == tagInfo[0] ) {
+                        for ( ImageTag entry : item.getContents() ) {
+                            if ( entry.getName() == tagInfo[1] ){
+                                File selFile = new File(entry.getFilePath());
+                                openImage(selFile);
+                            }
+                        }
+                    }
+                }
+            }
             
         } else if ("tagImage".equals(e.getActionCommand())) {
                 tagImage();
@@ -200,25 +235,20 @@ public class BasicWindow extends JFrame implements ActionListener {
         tree.addTag(newTag);
     }
     
-    public void openImage () {
-        JFileChooser imageFC = new JFileChooser();
-        int returnVal = imageFC.showOpenDialog(this);
-            
-        if ( returnVal == javax.swing.JFileChooser.APPROVE_OPTION ) {
-            
-            selFile = imageFC.getSelectedFile();
+    public void openImage (File selFile) {
+
             try {
                 img = ImageIO.read(selFile);
             } catch (IOException ex) {
                 Logger.getLogger(BasicWindow.class.getName()).log(Level.SEVERE, null, ex);
                 System.exit(1);
             }
+            
             iPnl.newImage(img);
             iPnl.validate();
             iPnl.repaint();
             
-            this.pack();
-        }            
+            this.pack();            
     }
     
     public void addNewAlbum( String input ) {

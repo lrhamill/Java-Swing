@@ -47,6 +47,10 @@ public class AlbumSerializer {
                 returnAC = (AlbumContainer) loadedAlbums;
             }
         } catch (Exception ex) {
+            
+            // In the event that there is no saved album container
+            // create and save a blank one.
+            
             returnAC = new AlbumContainer();
             serializeAlbums(returnAC);
         }

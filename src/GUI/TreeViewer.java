@@ -88,6 +88,20 @@ public class TreeViewer extends JPanel implements TreeSelectionListener {
         
     }
     
+    public String[] getNodeTagInfo() {
+        
+        DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
+        DefaultMutableTreeNode targetAlbum = (DefaultMutableTreeNode) selectedNode.getParent();
+        
+        String returnAlbum = (String) targetAlbum.getUserObject();
+        String returnTag = (String) selectedNode.getUserObject();
+        
+        String[] returnVal = { returnAlbum, returnTag };
+        
+        return returnVal;
+        
+    }
+    
     public String deleteNode() {
         DefaultMutableTreeNode selectedNode = getSelectedNode();
         if (selectedNode != null) {
