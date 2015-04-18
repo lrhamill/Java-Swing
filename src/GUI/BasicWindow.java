@@ -29,6 +29,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 public class BasicWindow extends JFrame implements ActionListener {
     
@@ -124,12 +126,24 @@ public class BasicWindow extends JFrame implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         if ("openImage".equals(e.getActionCommand())) {
             JFileChooser imageFC = new JFileChooser();
+            
+            // Array that stores ImageIO file types
+            String[] fileTypes = ImageIO.getReaderFileSuffixes();
+            
+            // Set 
+            for (int i = 0; i < fileTypes.length; i++) {
+                FileFilter filter = new FileNameExtensionFilter(fileTypes[i] + " files", fileTypes[i]);
+                imageFC.addChoosableFileFilter(filter);
+                }
+            
+            
             int returnVal = imageFC.showOpenDialog(this);
             
             if ( returnVal == javax.swing.JFileChooser.APPROVE_OPTION ) {
-            
-                selFile = imageFC.getSelectedFile();
-                openImage(selFile);
+                    
+                    selFile = imageFC.getSelectedFile();
+                    openImage(selFile);
+
             }
         }
         
@@ -240,8 +254,9 @@ public class BasicWindow extends JFrame implements ActionListener {
             try {
                 img = ImageIO.read(selFile);
             } catch (IOException ex) {
-                Logger.getLogger(BasicWindow.class.getName()).log(Level.SEVERE, null, ex);
-                System.exit(1);
+                JOptionPane.showMessageDialog(null, "Unable to open the "
+                                          + "designated image.");
+                return;
             }
             
             iPnl.newImage(img);
@@ -265,12 +280,6 @@ public class BasicWindow extends JFrame implements ActionListener {
         
         albumsToDisplay.removeAlbum(input);
         Serializer.serializeAlbums(albumsToDisplay);
-        
-    }
-    
-    public void deleteTag( String input ) {
-        
-        
         
     }
     
