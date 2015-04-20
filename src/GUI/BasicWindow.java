@@ -125,17 +125,14 @@ public class BasicWindow extends JFrame implements ActionListener {
     
     public void actionPerformed(ActionEvent e) {
         if ("openImage".equals(e.getActionCommand())) {
+            //Creates an open image dialog that only allows files that can be
+            // parsed by ImageIO to be selected.
+            
             JFileChooser imageFC = new JFileChooser();
-            
-            // Array that stores ImageIO file types
-            String[] fileTypes = ImageIO.getReaderFileSuffixes();
-            
-            // Set 
-            for (int i = 0; i < fileTypes.length; i++) {
-                FileFilter filter = new FileNameExtensionFilter(fileTypes[i] + " files", fileTypes[i]);
-                imageFC.addChoosableFileFilter(filter);
-                }
-            
+            FileFilter validFiles = new ImageFileFilter();
+            imageFC.addChoosableFileFilter(validFiles);
+            imageFC.setAcceptAllFileFilterUsed(false);
+            imageFC.setFileFilter(validFiles);
             
             int returnVal = imageFC.showOpenDialog(this);
             
