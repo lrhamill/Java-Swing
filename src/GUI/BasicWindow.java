@@ -29,6 +29,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
@@ -45,6 +46,7 @@ public class BasicWindow extends JFrame implements ActionListener {
     JPanel tPnl = new ImagePanel();
     TreeViewer tree = new TreeViewer();
     JMenuBar menuBar;
+    JSlider slider;
     
     // Menu icons
     ImageIcon open = new ImageIcon("open.png");
@@ -79,6 +81,20 @@ public class BasicWindow extends JFrame implements ActionListener {
         tPnl.add( tree, BorderLayout.CENTER );
         tPnl.add( btnPnl, BorderLayout.SOUTH );
         
+        // add zoom slider
+        createSlider();
+        tPnl.add( slider, BorderLayout.EAST );
+        
+    }
+    
+    public void createSlider() {
+        
+        slider = new JSlider(JSlider.VERTICAL, 50, 200, 100);  
+        slider.setMajorTickSpacing(50);  
+        slider.setMinorTickSpacing(10);  
+        slider.setPaintTicks(true);  
+        slider.setPaintLabels(true);  
+        slider.addChangeListener(iPnl);  
     }
     
     private void createMenu() {
@@ -257,9 +273,6 @@ public class BasicWindow extends JFrame implements ActionListener {
             }
             
             iPnl.newImage(img);
-            iPnl.validate();
-            iPnl.repaint();
-            
             this.pack();            
     }
     
@@ -297,7 +310,9 @@ public class BasicWindow extends JFrame implements ActionListener {
         createMenu();
         createTree();
         pnl.add( tPnl, BorderLayout.WEST );
-        pnl.add( iPnl, BorderLayout.CENTER );
+        JScrollPane scrollableiPnl = new JScrollPane(iPnl);
+        pnl.add( scrollableiPnl, BorderLayout.CENTER );
+        
         add( pnl );
         pack();
         setVisible( true );
