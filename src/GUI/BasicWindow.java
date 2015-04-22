@@ -16,6 +16,7 @@ import AlbumTrees.AlbumSerializer;
 import AlbumTrees.ImageTag;
 import AlbumTrees.PhotoAlbum;
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -32,6 +33,7 @@ import javax.swing.*;
 import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.plaf.basic.BasicButtonUI;
 
 public class BasicWindow extends JFrame implements ActionListener {
     
@@ -42,7 +44,7 @@ public class BasicWindow extends JFrame implements ActionListener {
     // UI components
     JPanel pnl = new JPanel();
     JPanel menuPanel = new JPanel();
-    ImagePanel iPnl = new ImagePanel();
+    JTabbedPane iPnl = new JTabbedPane();
     JPanel tPnl = new ImagePanel();
     TreeViewer tree = new TreeViewer();
     JMenuBar menuBar;
@@ -52,6 +54,7 @@ public class BasicWindow extends JFrame implements ActionListener {
     ImageIcon open = new ImageIcon("open.png");
     ImageIcon tag = new ImageIcon("tag.png"); 
     ImageIcon albumIcon = new ImageIcon("album.png");
+    ImageIcon crop = new ImageIcon("crop.png");
     
     // Image and selected file object
     BufferedImage img =  null;
@@ -84,7 +87,6 @@ public class BasicWindow extends JFrame implements ActionListener {
         // add zoom slider
         createSlider();
         tPnl.add( slider, BorderLayout.EAST );
-        
     }
     
     public void createSlider() {
@@ -93,8 +95,7 @@ public class BasicWindow extends JFrame implements ActionListener {
         slider.setMajorTickSpacing(50);  
         slider.setMinorTickSpacing(10);  
         slider.setPaintTicks(true);  
-        slider.setPaintLabels(true);  
-        slider.addChangeListener(iPnl);  
+        slider.setPaintLabels(true);    
     }
     
     private void createMenu() {
@@ -109,6 +110,15 @@ public class BasicWindow extends JFrame implements ActionListener {
         openFile.setActionCommand("openImage");
         openFile.addActionListener(this);
         filemenu.add( openFile );
+        
+        JMenu editMenu = new JMenu("Edit");
+        editMenu.getAccessibleContext().setAccessibleDescription(
+            "Edit an opened image");
+        
+        JMenuItem cropImg = new JMenuItem( "Crop Image", crop );
+        cropImg.setActionCommand("cropImage");
+        cropImg.addActionListener(this);
+        editMenu.add( cropImg );
         
         JMenu albumMenu = new JMenu("Album");
         filemenu.getAccessibleContext().setAccessibleDescription(
@@ -130,6 +140,7 @@ public class BasicWindow extends JFrame implements ActionListener {
         
         
         menuBar.add( filemenu );
+        menuBar.add( editMenu );
         menuBar.add( albumMenu );
         menuBar.add( tagMenu );
         menuPanel.add( menuBar );
@@ -271,8 +282,23 @@ public class BasicWindow extends JFrame implements ActionListener {
                                           + "designated image.");
                 return;
             }
+            TabbedImagePane newImg = new TabbedImagePane();
+            newImg.newImage(img);
+            slider.addChangeListener(newImg);
+            TabCloseActionHandler tabCloser = new TabCloseActionHandler(selFile.getName());
             
-            iPnl.newImage(img);
+            JPanel titlePanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+            titlePanel.setOpaque(false);
+            JLabel titleLbl = new JLabel(selFile.getName());
+            titleLbl.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 5));
+            titlePanel.add(titleLbl);
+            JButton closeButton = new JButton("x");
+            closeButton.addActionListener(tabCloser);
+            titlePanel.add(closeButton);
+            
+            iPnl.addTab(selFile.getName(), newImg);
+            iPnl.setTabComponentAt(iPnl.indexOfComponent(newImg), titlePanel);
+
             this.pack();            
     }
     
@@ -317,7 +343,33 @@ public class BasicWindow extends JFrame implements ActionListener {
         pack();
         setVisible( true );
     }
+    
+    public class TabCloseActionHandler implements ActionListener {
 
+        private String tabName;
+
+        public TabCloseActionHandler(String tabName) {
+            this.tabName = tabName;
+        }
+
+        public String getTabName() {
+            return tabName;
+        }
+
+        public void actionPerformed(ActionEvent evt) {
+
+            int index = iPnl.indexOfTab(getTabName());
+            if (index >= 0) {
+
+                iPnl.removeTabAt(index);
+                // It would probably be worthwhile getting the source
+                // casting it back to a JButton and removing
+                // the action handler reference ;)
+
+            }
+
+    }
+
+}   
+    
 }
-
-  

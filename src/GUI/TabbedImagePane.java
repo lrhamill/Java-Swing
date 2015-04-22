@@ -22,29 +22,17 @@ import javax.swing.event.ChangeListener;
  *
  * @author c1031996
  */
-public class ImagePanel extends JPanel implements ChangeListener, MouseListener, MouseMotionListener {
+public class TabbedImagePane extends JPanel implements ChangeListener {
     
-    JLabel picLabel;
+    JLabel picLabel = new JLabel();
     BufferedImage imgToDisplay;
     JScrollPane scroller;
     
-    private int x1, y1, x2, y2;
-    private boolean cropping = false;
-    private boolean dragging = false;
-
-    
-    ImagePanel ( ) {
+    TabbedImagePane ( ) {
         
-        picLabel = new JLabel();
-        //Dimension defaultSize = new Dimension(300, 300);
-        
-        //picLabel.setPreferredSize(defaultSize);
- 
         scroller = new JScrollPane(picLabel);
         add(scroller, BorderLayout.CENTER);
         
-        picLabel.addMouseListener(this);
-        picLabel.addMouseMotionListener(this);
     }
 
     public void newImage ( BufferedImage input ) {
@@ -53,8 +41,6 @@ public class ImagePanel extends JPanel implements ChangeListener, MouseListener,
         imgToDisplay = input;
         remove(scroller);
         picLabel = new JLabel( new ImageIcon(input) );
-        picLabel.addMouseListener(this);
-        picLabel.addMouseMotionListener(this);
         scroller = new JScrollPane(picLabel);
         add(scroller, BorderLayout.CENTER);
         
@@ -68,8 +54,6 @@ public class ImagePanel extends JPanel implements ChangeListener, MouseListener,
         
         remove(scroller);
         picLabel = new JLabel( new ImageIcon(input) );
-        picLabel.addMouseListener(this);
-        picLabel.addMouseMotionListener(this);
         scroller = new JScrollPane(picLabel);
         add(scroller, BorderLayout.CENTER);
         
@@ -85,12 +69,6 @@ public class ImagePanel extends JPanel implements ChangeListener, MouseListener,
         
         newImage(postCrop);
 
-    }
-    
-    public void nowCropping() {
-        cropping = true;
-        scroller.setFocusable(true);
-        System.out.println(cropping);
     }
     
     public BufferedImage zoomImage( double zoomScale ) {
@@ -126,46 +104,7 @@ public class ImagePanel extends JPanel implements ChangeListener, MouseListener,
         
     }
     
-     public void mousePressed(MouseEvent evt) {
-        if (cropping) {
-            x1 = evt.getX();
-            y1 = evt.getY();
-            
-            System.out.println(x1);
-            System.out.println(y1);
-        }
-        
-    }
     
-    public void mouseReleased(MouseEvent evt){
-        if (cropping) {
-        x2 = evt.getX();
-        y2 = evt.getY();
-
-        System.out.println(x2);
-        System.out.println(y2);
-        
-        cropImage( new Rectangle( Math.min(x1, x2), Math.min(y1, y2), Math.max(x1, x2), Math.max(y1, y2) ) );
-
-        cropping = false;
-       }
-    }
-     
-    public void mouseEntered(MouseEvent e) {   
-    }
-
-    public void mouseExited(MouseEvent e) {
-    }
-
-    public void mouseClicked(MouseEvent e) {
-        System.out.println("click");
-    }
-    
-    public void mouseMoved(MouseEvent e) {
-    }
-    
-    public void mouseDragged(MouseEvent e) {        
-    }
     
     
 }
