@@ -10,19 +10,21 @@ import java.io.Serializable;
 
 /**
  *
- * @author liamhamill
+ * @author c1031996
  */
 public class ImageTag implements Serializable {
     
     String albumTag;
     String filePath;
     String fileName;
+    String tagName;
     
     public ImageTag(String album, File location) {
         
         albumTag = album;
         filePath = location.getPath();
         fileName = location.getName();
+        tagName = fileName;
         
     }
     
@@ -31,14 +33,18 @@ public class ImageTag implements Serializable {
     }
     
     public String getName() {
-        return fileName;
+        return tagName;
     }
     
     public String getAlbum() {
         return albumTag;
     }
     
+    public void changeName( String newName ) {
+        tagName = newName;
+    }
+    
     public String toString() {
-        return fileName + ":" + filePath;
+        return tagName;
     }
 }

@@ -34,6 +34,7 @@ import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.plaf.basic.BasicButtonUI;
+import javax.swing.tree.DefaultMutableTreeNode;
 
 public class BasicWindow extends JFrame implements ActionListener {
     
@@ -76,9 +77,15 @@ public class BasicWindow extends JFrame implements ActionListener {
         openBtn.setActionCommand("openTag");
         openBtn.addActionListener(this);
         
+        JButton renameBtn = new JButton("Rename Album/Tag");
+        renameBtn.setActionCommand("renameTag");
+        renameBtn.addActionListener(this);
+        
         JPanel btnPnl = new JPanel();
-        btnPnl.add( openBtn, BorderLayout.CENTER );
+        btnPnl.setLayout( new BorderLayout() );
+        btnPnl.add( openBtn, BorderLayout.NORTH );
         btnPnl.add( delBtn, BorderLayout.SOUTH );
+        btnPnl.add( renameBtn, BorderLayout.CENTER );
         
         tPnl.setLayout( new BorderLayout() );
         tPnl.add( tree, BorderLayout.CENTER );
@@ -188,9 +195,15 @@ public class BasicWindow extends JFrame implements ActionListener {
                 if ( tree.isNodeAlbum()) {
                 albumsToDisplay.removeAlbum( tree.deleteNode() );
             } else {
+                try {
                     String targetAlbum = tree.getNodeAlbumName();
                     albumsToDisplay.deleteTag( targetAlbum, tree.deleteNode() );
+                } catch (NullPointerException nullE) {
+                    JOptionPane.showMessageDialog(null, "You cannot delete the album container.");
+                    return;
                 }
+            }   
+                    
                 
             // Save modified AlbumContainer    
             Serializer.serializeAlbums(albumsToDisplay);
@@ -203,21 +216,34 @@ public class BasicWindow extends JFrame implements ActionListener {
                                           + "image tag, not an album.");
                 return;
             } else {
-                String[] tagInfo = tree.getNodeTagInfo();
-                for ( PhotoAlbum item : albumsToDisplay.getContents() ) {
-                    if ( item.getName() == tagInfo[0] ) {
-                        for ( ImageTag entry : item.getContents() ) {
-                            if ( entry.getName() == tagInfo[1] ){
-                                File selFile = new File(entry.getFilePath());
-                                openImage(selFile);
+                try {
+                    String[] tagInfo = tree.getNodeTagInfo();
+                    for ( PhotoAlbum item : albumsToDisplay.getContents() ) {
+                        if ( item.getName() == tagInfo[0] ) {
+                            for ( ImageTag entry : item.getContents() ) {
+                                if ( entry.getName() == tagInfo[1] ){
+                                    File selFile = new File(entry.getFilePath());
+                                    openImage(selFile);
+                                }
                             }
                         }
                     }
+                } catch (NullPointerException nullE) {
+                    JOptionPane.showMessageDialog(null, "You can only open an "
+                                          + "image tag, not an album.");
                 }
             }
             
         } else if ("tagImage".equals(e.getActionCommand())) {
                 tagImage();
+        } else if ("renameTag".equals(e.getActionCommand())) {
+            JFrame container = new JFrame();
+            String prompt = "What would you like to rename this album/tag?";
+            String input = JOptionPane.showInputDialog(container, prompt);
+            
+            if (input != null) {
+                renameNode(input);
+            }            
         }
     }
     
@@ -271,6 +297,25 @@ public class BasicWindow extends JFrame implements ActionListener {
         //Update TreeViewer
         
         tree.addTag(newTag);
+    }
+    
+    public void renameNode( String input ) {
+        try {
+            if ( tree.isNodeAlbum()) {
+            albumsToDisplay.renameAlbum( tree.getNodeName(), input);
+            } else {
+                        albumsToDisplay.renameTag( tree.getNodeAlbumName(), tree.getNodeName(), input );
+                    }
+
+                // Save modified AlbumContainer    
+                Serializer.serializeAlbums(albumsToDisplay);
+
+                // Update JTree
+                DefaultMutableTreeNode selectedNode = tree.getSelectedNode();
+                selectedNode.setUserObject(input);
+        } catch (NullPointerException e) {
+            JOptionPane.showMessageDialog(null, "You cannot rename the album container.");
+        }
     }
     
     public void openImage (File selFile) {

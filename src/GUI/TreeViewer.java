@@ -41,11 +41,11 @@ public class TreeViewer extends JPanel implements TreeSelectionListener {
         
         for ( PhotoAlbum item : albums.getContents() ) {
             
-            DefaultMutableTreeNode thisAlbum = new DefaultMutableTreeNode(item.getName());
+            DefaultMutableTreeNode thisAlbum = new DefaultMutableTreeNode(item);
             top.add(thisAlbum);
             
             for ( ImageTag entry : item.getContents() ) {
-                DefaultMutableTreeNode thisTag = new DefaultMutableTreeNode(entry.getName());
+                DefaultMutableTreeNode thisTag = new DefaultMutableTreeNode(entry);
                 thisAlbum.add(thisTag);
             }
         }
@@ -115,6 +115,11 @@ public class TreeViewer extends JPanel implements TreeSelectionListener {
         } else {
             return null;
         }
+    }
+    
+    public String getNodeName() {
+        DefaultMutableTreeNode selectedNode = getSelectedNode();
+        return selectedNode.toString();
     }
     
     public DefaultMutableTreeNode getSelectedNode() {

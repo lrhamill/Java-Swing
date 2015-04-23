@@ -39,9 +39,9 @@ public class AlbumContainer implements Serializable {
         Collections.sort(contents, NAME_ORDER);        
     }
     
-    public void removeAlbum ( String input ) {
+    public void removeAlbum( String target ) {
         
-        if ( input == null ) { return; }
+        if ( target == null ) { return; }
         
         /**
          * A limitation of the app is that users can't delete an individual
@@ -52,10 +52,22 @@ public class AlbumContainer implements Serializable {
         //Copy list to iterate on (in case of multiple albums w/ same name)
         List<PhotoAlbum> iterateOn = new ArrayList<PhotoAlbum>(contents);
         for ( PhotoAlbum item : iterateOn ) {
-            if ( item.getName() == input ) {
+            if ( item.getName().equals(target) ) {
                 contents.remove(item);
             } 
         }
+    }
+    
+    public void renameAlbum( String target, String input ) {
+        
+        if ( input == null || target == null ) { return; }
+        
+        List<PhotoAlbum> iterateOn = new ArrayList<PhotoAlbum>(contents);
+        for ( PhotoAlbum item : iterateOn ) {
+            if ( item.getName().equals(target) ) {
+                item.changeName(input);
+            } 
+        }        
     }
     
     public int getSize() {
@@ -77,6 +89,18 @@ public class AlbumContainer implements Serializable {
                 return;
             }
         }
+    }
+    
+    public void renameTag( String targetAlbum, String targetTag, String input ) {
+        
+        if ( input == null || targetAlbum == null || targetTag == null ) { return; }
+        
+        List<PhotoAlbum> iterateOn = new ArrayList<PhotoAlbum>(contents);
+        for ( PhotoAlbum item : iterateOn ) {
+            if ( item.getName().equals(targetAlbum) ) {
+                item.renameTag(targetTag, input);
+            } 
+        }        
     }
     
     public String toString() {

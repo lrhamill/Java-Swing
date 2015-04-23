@@ -55,8 +55,8 @@ public class PhotoAlbum implements Serializable {
         return name;
     }
     
-    public void deleteTag( String input ) {
-        if ( input == null ) { return; }
+    public void deleteTag( String target ) {
+        if ( target == null ) { return; }
         
         /**
          * A limitation of the app is that users can't delete an individual
@@ -67,24 +67,40 @@ public class PhotoAlbum implements Serializable {
         //Copy list to iterate on (in case of multiple tags w/ same name)
         List<ImageTag> iterateOn = new ArrayList<ImageTag>(contents);
         for ( ImageTag item : iterateOn ) {
-            if ( item.getName() == input ) {
+            if ( item.getName() == target ) {
                 contents.remove(item);
             } 
         }
     }
     
+     public void renameTag( String target, String input ) {
+        
+        
+        //Copy list to iterate on (in case of multiple tags w/ same name)
+        List<ImageTag> iterateOn = new ArrayList<ImageTag>(contents);
+        for ( ImageTag item : iterateOn ) {
+            if ( item.getName().equals(target) ) {
+                item.changeName(input);
+            } 
+        }
+    }
+    
+    public void changeName( String newName ) {
+        name = newName;
+    }
+    
     @Override
     public String toString() {
-        // Code for debugging.
+        return name;
         
-        String contentsAsString = "";
-        contentsAsString += name;
-        contentsAsString += "\n"; 
-        contentsAsString += "\n"; 
-        for ( ImageTag item : contents ) {
-            contentsAsString += item.toString();
-            contentsAsString += "\n";             
-        } return contentsAsString;
+//        String contentsAsString = "";
+//        contentsAsString += name;
+//        contentsAsString += "\n"; 
+//        contentsAsString += "\n"; 
+//        for ( ImageTag item : contents ) {
+//            contentsAsString += item.toString();
+//            contentsAsString += "\n";             
+//        } return contentsAsString;
         
     }
     
