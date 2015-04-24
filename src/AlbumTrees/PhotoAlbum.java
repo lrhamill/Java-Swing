@@ -1,8 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package AlbumTrees;
 
 import java.io.Serializable;
@@ -20,7 +16,7 @@ public class PhotoAlbum implements Serializable {
     /** 
      * Initialise contents as a List interface as a defensive measure.
      * Makes it easier to adapt the code if ArrayList turns out to be an
-     * inappropriate choice later on in development.
+     * inappropriate choice later.
     **/
     
     List<ImageTag> contents = new ArrayList();
@@ -28,6 +24,7 @@ public class PhotoAlbum implements Serializable {
     
     // Comparator allows us to sort contents by name
     static final Comparator<ImageTag> NAME_ORDER = new Comparator<ImageTag>() {
+        @Override
         public int compare(ImageTag i1, ImageTag i2) {
             return i1.getName().compareTo(i2.getName());
         }
@@ -39,7 +36,6 @@ public class PhotoAlbum implements Serializable {
     
     public void addToContents(ImageTag newItem) {
         // Add ImageTag and sort
-        // N.B. TreeView will not be updated until application restart
         
         contents.add(newItem);
         Collections.sort(contents, NAME_ORDER);
@@ -81,6 +77,7 @@ public class PhotoAlbum implements Serializable {
         for ( ImageTag item : iterateOn ) {
             if ( item.getName().equals(target) ) {
                 item.changeName(input);
+                Collections.sort(contents, NAME_ORDER);
             } 
         }
     }
@@ -91,17 +88,7 @@ public class PhotoAlbum implements Serializable {
     
     @Override
     public String toString() {
-        return name;
-        
-//        String contentsAsString = "";
-//        contentsAsString += name;
-//        contentsAsString += "\n"; 
-//        contentsAsString += "\n"; 
-//        for ( ImageTag item : contents ) {
-//            contentsAsString += item.toString();
-//            contentsAsString += "\n";             
-//        } return contentsAsString;
-        
+        return name;        
     }
     
     

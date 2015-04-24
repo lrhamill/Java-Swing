@@ -17,7 +17,10 @@ public class ImageFileFilter extends FileFilter {
     // Array that stores ImageIO file types
     String[] validExtensions = ImageIO.getReaderFileSuffixes();        
     
+    @Override
     public boolean accept(File f) {
+        
+        // Code to identify valid file types
         
         if ( f.isDirectory() ) {
             return true;
@@ -38,7 +41,8 @@ public class ImageFileFilter extends FileFilter {
         
     }
     
-    public String getDescription() {   
+    @Override
+    public String getDescription() {
         return "Image Files";
     }
         

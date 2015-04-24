@@ -1,8 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package AlbumTrees;
 
 import java.io.File;
@@ -14,10 +10,14 @@ import java.io.Serializable;
  */
 public class ImageTag implements Serializable {
     
-    String albumTag;
+    // Image tag class. Contains a filename, path, and user-visible name
+    
+    String albumTag; // Note: This is only to place a tag in the right album at creation
     String filePath;
     String fileName;
     String tagName;
+    
+    // Class is fairly self-explanatory.
     
     public ImageTag(String album, File location) {
         

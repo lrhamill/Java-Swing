@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package AlbumTrees;
 
 import java.io.BufferedInputStream;
@@ -13,14 +8,18 @@ import java.io.ObjectOutputStream;
 
 /**
  *
- * @author liamhamill
+ * @author c1031996
  */
 public class AlbumSerializer {
+    
+    // Class contains code for loading and saving albums.
     
     final String savedAlbums = "savedAlbums.ser";
     AlbumContainer returnAC;
     
     public void serializeAlbums (AlbumContainer albums) {
+        
+        //Save albums to disk.
         
         try {
             
@@ -34,6 +33,9 @@ public class AlbumSerializer {
         }
     }
     public AlbumContainer deserializeAlbums() {
+        
+        // Load albums.
+        
         try {
             
             FileInputStream fileIn = new FileInputStream(savedAlbums);
@@ -48,7 +50,7 @@ public class AlbumSerializer {
             }
         } catch (Exception ex) {
             
-            // In the event that there is no saved album container
+            // In the event that there is no saved album container,
             // create and save a blank one.
             
             returnAC = new AlbumContainer();

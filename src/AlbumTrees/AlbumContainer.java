@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package AlbumTrees;
 
 import java.util.List;
@@ -27,6 +22,7 @@ public class AlbumContainer implements Serializable {
     
     // Comparator allows us to sort contents by name
     static final Comparator<PhotoAlbum> NAME_ORDER = new Comparator<PhotoAlbum>() {
+        @Override
         public int compare(PhotoAlbum a1, PhotoAlbum a2) {
             return a1.getName().compareTo(a2.getName());
         }
@@ -50,7 +46,7 @@ public class AlbumContainer implements Serializable {
         **/
         
         //Copy list to iterate on (in case of multiple albums w/ same name)
-        List<PhotoAlbum> iterateOn = new ArrayList<PhotoAlbum>(contents);
+        List<PhotoAlbum> iterateOn = new ArrayList<>(contents);
         for ( PhotoAlbum item : iterateOn ) {
             if ( item.getName().equals(target) ) {
                 contents.remove(item);
@@ -62,10 +58,11 @@ public class AlbumContainer implements Serializable {
         
         if ( input == null || target == null ) { return; }
         
-        List<PhotoAlbum> iterateOn = new ArrayList<PhotoAlbum>(contents);
+        List<PhotoAlbum> iterateOn = new ArrayList<>(contents);
         for ( PhotoAlbum item : iterateOn ) {
             if ( item.getName().equals(target) ) {
                 item.changeName(input);
+                Collections.sort(contents, NAME_ORDER);
             } 
         }        
     }
@@ -84,7 +81,7 @@ public class AlbumContainer implements Serializable {
         // Finds the album and deletes the tag
         
         for (PhotoAlbum item : contents) {
-            if ( item.getName() == albumName ) {
+            if ( item.getName().equals(albumName) ) {
                 item.deleteTag(tagName);
                 return;
             }
@@ -95,7 +92,7 @@ public class AlbumContainer implements Serializable {
         
         if ( input == null || targetAlbum == null || targetTag == null ) { return; }
         
-        List<PhotoAlbum> iterateOn = new ArrayList<PhotoAlbum>(contents);
+        List<PhotoAlbum> iterateOn = new ArrayList<>(contents);
         for ( PhotoAlbum item : iterateOn ) {
             if ( item.getName().equals(targetAlbum) ) {
                 item.renameTag(targetTag, input);
@@ -103,6 +100,7 @@ public class AlbumContainer implements Serializable {
         }        
     }
     
+    @Override
     public String toString() {
         // Debug code
         

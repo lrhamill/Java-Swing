@@ -1,8 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package GUI;
 
 import AlbumTrees.AlbumContainer;
@@ -19,6 +15,8 @@ import javax.swing.tree.DefaultTreeModel;
  * @author c1031996
  */
 public class TreeViewer extends JPanel implements TreeSelectionListener {
+    
+    // Contains code for displaying and updating the JTree
     
     private JTree tree;
     private JScrollPane scrollPane;
@@ -41,11 +39,12 @@ public class TreeViewer extends JPanel implements TreeSelectionListener {
         
         for ( PhotoAlbum item : albums.getContents() ) {
             
-            DefaultMutableTreeNode thisAlbum = new DefaultMutableTreeNode(item);
+            DefaultMutableTreeNode thisAlbum = new DefaultMutableTreeNode(item.getName());
             top.add(thisAlbum);
+            System.out.println(item.getContents());
             
             for ( ImageTag entry : item.getContents() ) {
-                DefaultMutableTreeNode thisTag = new DefaultMutableTreeNode(entry);
+                DefaultMutableTreeNode thisTag = new DefaultMutableTreeNode(entry.getName());
                 thisAlbum.add(thisTag);
             }
         }
@@ -130,5 +129,9 @@ public class TreeViewer extends JPanel implements TreeSelectionListener {
         DefaultMutableTreeNode node = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
 
         if (node == null) return;
+    }
+    
+    public void reload() {
+        model.reload();
     }
 }
