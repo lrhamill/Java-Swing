@@ -42,8 +42,6 @@ public class TabbedImagePane extends JPanel implements ChangeListener {
         
         // Updates image and loads new imgToDisplay
         
-        System.out.println(input);
-        
         imgToDisplay = input;
         remove(scroller);
         picLabel = new JLabel( new ImageIcon(input) );

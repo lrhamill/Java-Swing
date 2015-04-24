@@ -1,4 +1,3 @@
-
 package GUI;
 
 import AlbumTrees.AlbumContainer;
@@ -25,6 +24,8 @@ public class TreeViewer extends JPanel implements TreeSelectionListener {
     
     public TreeViewer() {
         
+        // Constructs JTree and places it inside a scroll pane
+        
         setLayout( new BorderLayout() );
         tree = new JTree(top);
         model = (DefaultTreeModel) tree.getModel();
@@ -37,12 +38,15 @@ public class TreeViewer extends JPanel implements TreeSelectionListener {
     
     public void createNodes(AlbumContainer albums) {
         
+        // Creates the JTree structure out of the AlbumContainer
+        
         for ( PhotoAlbum item : albums.getContents() ) {
             
+            // Add album
             DefaultMutableTreeNode thisAlbum = new DefaultMutableTreeNode(item.getName());
             top.add(thisAlbum);
-            System.out.println(item.getContents());
             
+            // Add album contents to album
             for ( ImageTag entry : item.getContents() ) {
                 DefaultMutableTreeNode thisTag = new DefaultMutableTreeNode(entry.getName());
                 thisAlbum.add(thisTag);
@@ -53,23 +57,32 @@ public class TreeViewer extends JPanel implements TreeSelectionListener {
     
     public void addAlbum( PhotoAlbum album ) {
         
+        // Insert new album into JTree
         DefaultMutableTreeNode thisAlbum = new DefaultMutableTreeNode(album.getName());
         model.insertNodeInto(thisAlbum, top, top.getChildCount());
     }
     
     public void addTag( ImageTag tag ) {
+        
+        // Insert new tag into JTree
+        
+        // Go through album nodes until you find the right album
         for ( int i = 0; i < top.getChildCount(); i++ ) {
+            
             DefaultMutableTreeNode album = (DefaultMutableTreeNode) top.getChildAt(i);
-            if ( tag.getAlbum() == (String) album.getUserObject() ) {
+            
+            // If album is correct, add the tag
+            if ( tag.getAlbum().equals( (String) album.getUserObject() ) ) {
                 DefaultMutableTreeNode thisTag = new DefaultMutableTreeNode(tag.getName());
                 model.insertNodeInto(thisTag, album, album.getChildCount());
             }
-            
         }
     }
     
     public boolean isNodeAlbum() {
     
+        // Tests to see if node is an album by looking at its parent
+        
         DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
         if ( selectedNode.getParent() == top ) {
             return true;
@@ -80,6 +93,8 @@ public class TreeViewer extends JPanel implements TreeSelectionListener {
     
     public String getNodeAlbumName() {
         
+        // Gets the parent node of the selected tag
+        
         DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
         DefaultMutableTreeNode targetAlbum = (DefaultMutableTreeNode) selectedNode.getParent();
         
@@ -88,6 +103,8 @@ public class TreeViewer extends JPanel implements TreeSelectionListener {
     }
     
     public String[] getNodeTagInfo() {
+        
+        // Returns tag name and album name
         
         DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
         DefaultMutableTreeNode targetAlbum = (DefaultMutableTreeNode) selectedNode.getParent();
@@ -102,6 +119,10 @@ public class TreeViewer extends JPanel implements TreeSelectionListener {
     }
     
     public String deleteNode() {
+        
+        // Delete's selected node and returns its name so that it can be deleted
+        // from AlbumContainer.
+        
         DefaultMutableTreeNode selectedNode = getSelectedNode();
         if (selectedNode != null) {
             try {
@@ -117,18 +138,23 @@ public class TreeViewer extends JPanel implements TreeSelectionListener {
     }
     
     public String getNodeName() {
+        
+        // Currently selected node's name.
+        
         DefaultMutableTreeNode selectedNode = getSelectedNode();
         return selectedNode.toString();
+    
     }
     
     public DefaultMutableTreeNode getSelectedNode() {
+        
         return (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
+    
     }
+    
+    @Override
     public void valueChanged(TreeSelectionEvent e) {
         
-        DefaultMutableTreeNode node = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
-
-        if (node == null) return;
     }
     
     public void reload() {

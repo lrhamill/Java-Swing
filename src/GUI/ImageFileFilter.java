@@ -22,9 +22,12 @@ public class ImageFileFilter extends FileFilter {
         
         // Code to identify valid file types
         
+        // Directories are fine
         if ( f.isDirectory() ) {
             return true;
         }
+        
+        // Extract filename and compare to array of valid file types
         
         String filename = f.getName();
         String extension = filename.substring(filename.lastIndexOf(".")+1);
